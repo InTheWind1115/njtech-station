@@ -7,7 +7,9 @@
 <!--    <router-link to="friend">同性交友</router-link>-->
 <!--    <router-link to="profile">个人资料</router-link>-->
 <!--    <router-link to="square">广场</router-link>-->
-    <router-view class="content"></router-view>
+    <div class="content" :style="setWidth">
+      <router-view></router-view>
+    </div>
   </div>
 
 </template>
@@ -17,6 +19,12 @@
     name: "App",
     components: {
       Menu
+    },
+    computed: {
+      setWidth() {
+        let wid = document.documentElement.clientWidth - 191;
+        return {width: wid + 'px'};
+      }
     }
   }
 </script>

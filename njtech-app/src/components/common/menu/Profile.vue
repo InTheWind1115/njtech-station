@@ -4,15 +4,23 @@
             <img src="@/assets/images/head.jpg" alt="">
         </div>
         <div class="regLog">
-            <div>登录</div>
-            <div>注册</div>
+            <div @click="signIn">登录</div>
+            <div @click="signUp">注册</div>
         </div>
     </div>
 </template>
 
 <script>
     export default {
-        name: "Profile"
+      name: "Profile",
+      methods: {
+        signIn() {
+          this.$router.push('/enroll');
+        },
+        signUp() {
+          this.$router.push('/register');
+        }
+      }
     }
 </script>
 

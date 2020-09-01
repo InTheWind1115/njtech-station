@@ -6,6 +6,8 @@ const Data = () => import('../views/data/Data')
 const Friend = () => import('../views/friend/Friend')
 const Profile = () => import('../views/profile/Profile')
 const Square = () => import('../views/square/Square')
+const Register = () => import('../views/register/Register')
+const Enroll = () => import('../views/enroll/Enroll')
 
 Vue.use(VueRouter)
 
@@ -31,6 +33,12 @@ Vue.use(VueRouter)
     }, {
       path: '/square',
       component: Square
+    }, {
+      path: '/register',
+      component: Register
+    }, {
+      path: '/enroll',
+      component: Enroll
     }
   ]
 
