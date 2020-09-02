@@ -8,6 +8,7 @@
     </div>
     <div class="pwd input-placeholder focus-color distance">
       <input id="password" class="input-placeholder focus-color" type="password" placeholder="密码">
+      <span v-show="flag">密码错误</span>
     </div>
     <div class="agreement">
       <label for="agree">
@@ -16,15 +17,40 @@
       <span>忘记密码?</span>
     </div>
     <div class="btn">
-      <span class="btn-enroll">登录</span>
+      <span class="btn-enroll" @click="register">登录</span>
       <span class="btn-reg">注册</span>
     </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 export default {
-name: "enroll.vue"
+  name: "enroll.vue",
+  data() {
+    return {
+      flag: true
+    }
+  },
+  methods: {
+    register() {
+      let phone = document.getElementById("phone").value;
+      let pwd = document.getElementById("password").value;
+      let paras = {"phone": phone, "userpwd": pwd};
+      // console.log("##########" + axios);
+      axios({
+        method: "POST",
+        url: 'http://localhost:8081/njtech/',
+        data: paras,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded Access-Control-Allow-Origin',
+          'Access-Control-Allow-Origin': '*'
+        }
+      }).then(function(res) {
+        console.log(res);
+      });
+    }
+  }
 }
 </script>
 
@@ -180,6 +206,21 @@ name: "enroll.vue"
 
     .distance {
       margin-bottom: 40px!important;
+    }
+
+    .pwd {
+      position: relative;
+
+      span {
+
+        position: absolute;
+        line-height: 40px;
+        height: 40px;
+        width: 48px;
+        right: -52px;
+        font-size: 12px;
+        color: #f45d90;
+      }
     }
   }
 </style>
