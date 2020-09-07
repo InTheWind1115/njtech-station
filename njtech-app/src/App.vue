@@ -7,7 +7,7 @@
 <!--    <router-link to="friend">同性交友</router-link>-->
 <!--    <router-link to="profile">个人资料</router-link>-->
 <!--    <router-link to="square">广场</router-link>-->
-    <div class="content" :style="setWidth">
+    <div class="content overflow" :style="setWidth">
       <router-view></router-view>
     </div>
   </div>
@@ -23,7 +23,8 @@
     computed: {
       setWidth() {
         let wid = document.documentElement.clientWidth - 191;
-        return {width: wid + 'px'};
+        let height = document.documentElement.clientHeight;
+        return {width: wid + 'px', height: height + 'px'};
       }
     }
   }
@@ -34,5 +35,10 @@
   .content {
     position: absolute;
     left: 191px;
+  }
+
+  .overflow {
+    overflow: auto;
+    overflow-x: hidden;
   }
 </style>

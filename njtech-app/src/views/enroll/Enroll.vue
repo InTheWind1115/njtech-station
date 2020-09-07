@@ -17,8 +17,8 @@
       <span>忘记密码?</span>
     </div>
     <div class="btn">
-      <span class="btn-enroll" @click="register">登录</span>
-      <span class="btn-reg">注册</span>
+      <span class="btn-enroll" @click="enter">登录</span>
+      <span class="btn-reg" @click="reg">注册</span>
     </div>
   </div>
 </template>
@@ -29,18 +29,18 @@ export default {
   name: "enroll.vue",
   data() {
     return {
-      flag: true
+      flag: false
     }
   },
   methods: {
-    register() {
+    enter() {
       let phone = document.getElementById("phone").value;
       let pwd = document.getElementById("password").value;
       let paras = {"phone": phone, "userpwd": pwd};
-      // console.log("##########" + axios);
+      console.log("##########" + axios);
       axios({
         method: "POST",
-        url: 'http://localhost:8081/njtech/',
+        url: 'http://39.102.69.4:8080/njtech-app/',
         data: paras,
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded Access-Control-Allow-Origin',
@@ -48,7 +48,17 @@ export default {
         }
       }).then(function(res) {
         console.log(res);
+        console.log('!!!!!!!!!!!');
+        if ('res里面的flag为true') {
+          // 处理res数据
+        } else {
+          this.flag = false;
+        }
+
       });
+    },
+    reg() {
+      this.$router.replace('/register');
     }
   }
 }

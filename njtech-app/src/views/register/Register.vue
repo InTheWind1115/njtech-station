@@ -4,23 +4,25 @@
       注册
     </div>
     <div id="name" class="name input-placeholder focus-color">
-      <input type="text" placeholder="昵称" >
+      <input  id="username" type="text" placeholder="昵称（中文或字母或数字）" @input="testName" v-model="username">
+      <span id="name-info"></span>
     </div>
     <div class="pwd input-placeholder focus-color">
-      <input id="pwd" type="password" placeholder="密码（6-16个字母或数字组成，区分大小写）" @input="testPwd">
+      <input id="pwd" type="password" placeholder="密码（6-16个字母或数字组成，区分大小写）" @input="testPwd" v-model="userpwd">
       <span id="pwd-info"></span>
     </div>
     <div class="pwd-confirm input-placeholder focus-color">
-      <input id="pwd2" type="password" placeholder="确认密码" @input="pwdConfirm">
+      <input id="pwd2" type="password" placeholder="确认密码" @input="pwdConfirm" v-model="userpwd2">
       <span id="pwd-info2"></span>
     </div>
-    <div class="phone input-placeholder focus-color" @input="testPhone">
+    <div class="phone input-placeholder focus-color" @input="testPhone" v-model="phone">
       <input id="phone" type="text" placeholder="填写常用手机号">
       <span id="phone-info"></span>
     </div>
     <div class="phone-code input-placeholder focus-color">
-      <input type="text" placeholder="请输入短信验证码">
-      <span id="code-btn">点击获取</span>
+      <input type="text" placeholder="请输入短信验证码" v-model="confirmCode">
+      <span id="code-btn" @click="getCode" @mouseover="mouseoverBGC" @mouseout="mousedownBGC">点击获取</span>
+      <span id="code-info"></span>
     </div>
     <div class="agreement">
       <div class="agr-inner">
@@ -30,11 +32,11 @@
         </label>
       </div>
     </div>
-    <div class="reg-btn" tabindex="0" @mouseover="btnOver" @mouseout="btnOut">
+    <div class="reg-btn" tabindex="0" @mouseover="btnOver" @mouseout="btnOut" @click="register">
       注册
     </div>
     <div class="havaAcco">
-      <span>以有账号，直接登录></span>
+      <span @click="haveAccount">以有账号，直接登录></span>
     </div>
   </div>
 </template>
@@ -42,23 +44,43 @@
 <script>
 export default {
   name: "Register",
+  data() {
+    return {
+      regExp_name: new RegExp('^[\u4e00-\u9fffa-zA-Z0-9]{0,15}$'),
+      codeBtnFlag: true,
+      username: '',
+      userpwd: '',
+      userpwd2: '',
+      phone: '',
+      confirmCode: '',
+      nameFlag: false,
+      pwdFlag: false,
+      pwdLenFlag: false
+    }
+  },
   methods: {
     testPwd() {
       let pwd = document.getElementById('pwd').value;
       let reg = new RegExp("^([0-9]|[a-zA-Z]){6,16}$");
+      let this_copy = this;
       if (!reg.test(pwd)) {
         document.getElementById('pwd-info').innerText = '请输入符合长度的字母或数字';
+        this_copy.pwdLenFlag = false;
       } else {
         document.getElementById('pwd-info').innerText = '';
+        this_copy.pwdLenFlag = true;
       }
     },
     pwdConfirm() {
       let firstPwd = document.getElementById('pwd').value;
       let secondPwd = document.getElementById('pwd2').value;
+      let this_copy = this;
       if (firstPwd !== secondPwd) {
         document.getElementById('pwd-info2').innerText = '两次密码不一致';
+        this_copy.pwdFlag = false;
       } else {
         document.getElementById('pwd-info2').innerText = '';
+        this_copy.pwdFlag = true;
       }
     },
     testPhone() {
@@ -88,6 +110,79 @@ export default {
       let btn = document.getElementsByClassName('reg-btn')[0];
       if (btn.style.cursor == 'pointer') {
         btn.style.backgroundColor = '#00a1d6';
+      }
+    },
+    haveAccount() {
+      this.$router.replace('/enroll');
+    },
+    testName() {
+      let username = document.getElementById('username').value;
+      let hintEle = document.getElementById('name-info');
+      let info = "请将昵称控制在15个字符以内";
+      let this_copy = this;
+      if (this.regExp_name.test(username)) {
+        hintEle.innerText = '';
+        this_copy.nameFlag = true;
+      } else {
+        hintEle.innerText = info;
+        this_copy.nameFlag = false;
+      }
+    },
+    getCode() {
+      if (!this.codeBtnFlag) {
+        console.log('########');
+        return;
+      }
+      let this_copy = this;
+      this.codeBtnFlag = false;
+      let btn = document.getElementById('code-btn');
+      let codeInfo = document.getElementById('code-info');
+      //这里的代码是获取验证码
+      let second = 60;
+      console.log("@@@@@@@@@@");
+      let countDown = setInterval(function() {
+        btn.style.backgroundColor = '#f5f5f5';
+        btn.style.color = '#b8b8b8';
+        btn.style.borderColor = '#d9d9d9';
+        btn.style.cursor = 'not-allowed';
+        btn.innerText = second + 's..';
+        codeInfo.innerText = '验证码5分钟内有效';
+        second--;
+        if (second == -1) {
+          clearTimeout(countDown);
+          btn.innerText = '点击获取';
+          this_copy.codeBtnFlag = true;
+          btn.style.backgroundColor = '#00a1d6';
+          btn.style.color = '#ffffff';
+          btn.style.borderColor = '#00a1d6';
+          btn.style.cursor = 'pointer';
+          codeInfo.innerText = '';
+        }
+      }, 1000);
+    },
+    mouseoverBGC() {
+      if (!this.codeBtnFlag)
+        return;
+      let btn = document.getElementById('code-btn');
+      btn.style.backgroundColor = '#33b4de';
+    },
+    mousedownBGC() {
+      if (!this.codeBtnFlag)
+        return;
+      let btn = document.getElementById('code-btn');
+      btn.style.backgroundColor = '#00a1d6';
+    },
+    register() {
+      if (!this.nameFlag) {
+        // 通过modal提示用户用户名不符合要求
+      } else if (!this.pwdLenFlag) {
+        // 通过modal提示用户密码长度不符合要求
+      } else if (!this.pwdFlag) {
+        // 通过modal提示用户两次密码输入不一样
+      } esle if ('') {
+        //验证验证码的正确性
+      } else {
+        // 注册成功，然后跳转页面
       }
     }
   }
@@ -182,7 +277,7 @@ export default {
       }
 
       #code-btn:hover {
-        background-color: #33b4de;
+        /*background-color: #33b4de;*/
         cursor: pointer;
       }
     }
@@ -294,6 +389,32 @@ export default {
         color: #f45d90;
         right: -112px;
         top: 13.5px;
+      }
+    }
+
+    #name {
+      position: relative;
+      span {
+        position: absolute;
+        height: 40px;
+        line-height: 40px;
+        font-size: 12px;
+        right: -162.08px;
+        color: #f45d90;
+
+      }
+    }
+
+    .phone-code {
+      position: relative;
+
+      #code-info {
+        position: absolute;
+        height: 40px;
+        line-height: 40px;
+        font-size: 12px;
+        right: -107.05px;
+        color: #f45d90;
       }
     }
   }
