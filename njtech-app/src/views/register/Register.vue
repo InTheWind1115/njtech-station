@@ -4,7 +4,7 @@
       注册
     </div>
     <div id="name" class="name input-placeholder focus-color">
-      <input  id="username" type="text" placeholder="昵称（中文或字母或数字）" @input="testName" v-model="username">
+      <input  id="username" type="text" placeholder="昵称（中文或字母或数字）" @input="testName" v-model.lazy="username">
       <span id="name-info"></span>
     </div>
     <div class="pwd input-placeholder focus-color">
@@ -15,14 +15,16 @@
       <input id="pwd2" type="password" placeholder="确认密码" @input="pwdConfirm" v-model="userpwd2">
       <span id="pwd-info2"></span>
     </div>
-    <div class="phone input-placeholder focus-color" @input="testPhone" v-model="phone">
-      <input id="phone" type="text" placeholder="填写常用手机号">
+    <div class="phone input-placeholder focus-color" @input="testPhone" >
+      <input id="phone" type="text" placeholder="填写常用手机号" v-model.lazy="phone">
       <span id="phone-info"></span>
     </div>
     <div class="phone-code input-placeholder focus-color">
-      <input type="text" placeholder="请输入短信验证码" v-model="confirmCode">
+      <input id="code-input" type="text" placeholder="请输入短信验证码" v-model="confirmCode">
       <span id="code-btn" @click="getCode" @mouseover="mouseoverBGC" @mouseout="mousedownBGC">点击获取</span>
       <span id="code-info"></span>
+<!--      您的验证码输入错误-->
+<!--      这个验证码已经失效-->
     </div>
     <div class="agreement">
       <div class="agr-inner">
@@ -42,6 +44,7 @@
 </template>
 
 <script>
+  import axios from 'axios'
 export default {
   name: "Register",
   data() {
@@ -130,23 +133,34 @@ export default {
     },
     getCode() {
       if (!this.codeBtnFlag) {
-        console.log('########');
         return;
       }
       let this_copy = this;
       this.codeBtnFlag = false;
       let btn = document.getElementById('code-btn');
       let codeInfo = document.getElementById('code-info');
-      //这里的代码是获取验证码
+
+      let phoneNumber = this_copy.phone;
+      // console.log(phoneNumber + "@@@@@@@@@@@@@@@");
+      // 这里的代码是向后台发送请求，请求验证码
+      axios.get("http://localhost:7963/njtech/phonecode", {params: {
+        phone: phoneNumber
+        }}).then(res => {
+        // console.log(res);
+        if (res.data === 0)
+          document.getElementById('phone-info').innerText = '此手机号码已被注册';
+      }).catch(err => {
+
+      });
+
       let second = 60;
-      console.log("@@@@@@@@@@");
+      codeInfo.innerText = '验证码五分钟内有效';
       let countDown = setInterval(function() {
         btn.style.backgroundColor = '#f5f5f5';
         btn.style.color = '#b8b8b8';
         btn.style.borderColor = '#d9d9d9';
         btn.style.cursor = 'not-allowed';
         btn.innerText = second + 's..';
-        codeInfo.innerText = '验证码5分钟内有效';
         second--;
         if (second == -1) {
           clearTimeout(countDown);
@@ -173,17 +187,23 @@ export default {
       btn.style.backgroundColor = '#00a1d6';
     },
     register() {
-      if (!this.nameFlag) {
-        // 通过modal提示用户用户名不符合要求
-      } else if (!this.pwdLenFlag) {
-        // 通过modal提示用户密码长度不符合要求
-      } else if (!this.pwdFlag) {
-        // 通过modal提示用户两次密码输入不一样
-      } esle if ('') {
-        //验证验证码的正确性
-      } else {
-        // 注册成功，然后跳转页面
-      }
+      let check = document.getElementById('agree');
+      if (!check.checked)
+        return;
+      let this_copy = this;
+      let code = document.getElementById('code-input').value;
+      if (this.nameFlag && this.pwdFlag && this.pwdLenFlag) {
+        axios.post("http://localhost:7963/njtech/signup", `username=${this_copy.username}&userPwd=${this_copy.userpwd}&phone=${this_copy.phone}&code=${code}`).then(res => {
+          if (res.data === 0) {
+            document.getElementById('code-info').innerText = '这个验证码已经失效';
+          } else if (res.data === -1) {
+            document.getElementById('code-info').innerText = '您的验证码输入错误';
+          } else if (res.data === 1) {
+            this.$router.replace('/enroll');
+          }
+        });
+      } else
+        return;
     }
   }
 }
@@ -413,7 +433,7 @@ export default {
         height: 40px;
         line-height: 40px;
         font-size: 12px;
-        right: -107.05px;
+        right: -112px;
         color: #f45d90;
       }
     }

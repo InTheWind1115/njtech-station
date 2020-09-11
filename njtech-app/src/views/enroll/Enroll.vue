@@ -7,8 +7,8 @@
       <input id="phone" type="text" placeholder="你的手机号">
     </div>
     <div class="pwd input-placeholder focus-color distance">
-      <input id="password" class="input-placeholder focus-color" type="password" placeholder="密码">
-      <span v-show="flag">密码错误</span>
+      <input id="password" class="input-placeholder focus-color" type="password" placeholder="密码" @input="changeFlag">
+      <span v-show="flag" >密码错误</span>
     </div>
     <div class="agreement">
       <label for="agree">
@@ -36,29 +36,30 @@ export default {
     enter() {
       let phone = document.getElementById("phone").value;
       let pwd = document.getElementById("password").value;
-      let paras = {"phone": phone, "userpwd": pwd};
-      console.log("##########" + axios);
-      axios({
-        method: "POST",
-        url: 'http://39.102.69.4:8080/njtech-app/',
-        data: paras,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded Access-Control-Allow-Origin',
-          'Access-Control-Allow-Origin': '*'
-        }
-      }).then(function(res) {
-        console.log(res);
-        console.log('!!!!!!!!!!!');
-        if ('res里面的flag为true') {
-          // 处理res数据
-        } else {
-          this.flag = false;
-        }
-
-      });
+      let paras = {phone: phone, userPwd: pwd};
+      console.log(paras);
+      // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+      axios.post("http://localhost:7963/njtech/signin", `phone=${phone}&userPwd=${pwd}`)
+        .then(res=>{
+          let flag = res.data;
+          console.log(flag);
+          if(flag === true) {
+            console.log('###########');
+            this.$router.replace('/square');
+            this.flag = false;
+          } else {
+            this.flag = true;
+          }
+        })
+        .catch(err=>{
+          console.log(err)
+        })
     },
     reg() {
       this.$router.replace('/register');
+    },
+    changeFlag() {
+      this.flag = false;
     }
   }
 }
