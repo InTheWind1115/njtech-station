@@ -1,5 +1,7 @@
 <template>
   <div id="reg">
+    <modal :show="modalFlag" @close="closeModal" :mess="information">
+    </modal>
     <div class="title">
       注册
     </div>
@@ -30,7 +32,7 @@
       <div class="agr-inner">
         <label for="agree">
           <input type="checkbox" id="agree" @change="agreeChange"> 我已同意
-          <a href=";">《南工驿站使用协议》</a>
+          <a @click="showModal1">《南工驿站使用协议》</a>
         </label>
       </div>
     </div>
@@ -44,11 +46,18 @@
 </template>
 
 <script>
-  import axios from 'axios'
+  import axios from 'axios';
+  axios.defaults.baseURL = 'http://39.102.69.4:8080/njtech/';
+  import Modal from "@/components/common/modal/Modal";
 export default {
   name: "Register",
+  components: {
+    modal: Modal
+  },
   data() {
     return {
+      modalFlag: false,
+      information: '',
       regExp_name: new RegExp('^[\u4e00-\u9fffa-zA-Z0-9]{0,15}$'),
       codeBtnFlag: true,
       username: '',
@@ -143,7 +152,7 @@ export default {
       let phoneNumber = this_copy.phone;
       // console.log(phoneNumber + "@@@@@@@@@@@@@@@");
       // 这里的代码是向后台发送请求，请求验证码
-      axios.get("http://localhost:7963/njtech/phonecode", {params: {
+      axios.get("phonecode", {params: {
         phone: phoneNumber
         }}).then(res => {
         // console.log(res);
@@ -193,17 +202,28 @@ export default {
       let this_copy = this;
       let code = document.getElementById('code-input').value;
       if (this.nameFlag && this.pwdFlag && this.pwdLenFlag) {
-        axios.post("http://localhost:7963/njtech/signup", `username=${this_copy.username}&userPwd=${this_copy.userpwd}&phone=${this_copy.phone}&code=${code}`).then(res => {
+        axios.post("signup", `username=${this_copy.username}&userPwd=${this_copy.userpwd}&phone=${this_copy.phone}&code=${code}`).then(res => {
           if (res.data === 0) {
             document.getElementById('code-info').innerText = '这个验证码已经失效';
           } else if (res.data === -1) {
             document.getElementById('code-info').innerText = '您的验证码输入错误';
           } else if (res.data === 1) {
-            this.$router.replace('/enroll');
+            this_copy.information = '注册成功，2s后跳转到登录界面。';
+            this_copy.modalFlag = true;
+            setTimeout(function () {
+              this_copy.$router.replace('/enroll');
+            }, 2000);
           }
         });
       } else
         return;
+    },
+    showModal1() {
+      this.modalFlag = true;
+      this.information = '希望同学们可以喜欢这个地方，畅所欲言！';
+    },
+    closeModal() {
+      this.modalFlag = false;
     }
   }
 }

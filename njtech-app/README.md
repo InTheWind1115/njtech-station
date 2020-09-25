@@ -1,19 +1,7 @@
-# njtech-app
-
-## Project setup
+#### 1.登录或者注册之后，头像和用户名显示功能实现
 ```
-npm install
+1.首先在profile中监听总线bus
+    一个函数控制显示与否
+    一个函数控制显示的内容
+2.在合适的地方向bus总线上发送内容
 ```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

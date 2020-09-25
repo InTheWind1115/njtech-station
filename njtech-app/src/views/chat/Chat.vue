@@ -1,5 +1,6 @@
 <template>
     <div id="chat-root" :style="setShowMarginTop">
+        <modal :show="modalFlag" :mess="information" @close="closeModal"></modal>
         <div class="box-top">
             <span>对方：紫霞仙子</span>
         </div>
@@ -33,128 +34,149 @@
 </template>
 
 <script>
+  import Modal from "@/components/common/modal/Modal";
     export default {
-        name: "Chat",
-        data() {
-            return {
-                mess: ["我的意中人在附近", "啊，你看到他了？", "没有，因为我的紫青宝剑发出嘟嘟的声音", "哪儿来的嘟嘟声", "哎呀，我知道你听不见我才嘟给你听的嘛", "完了，我好害怕，我不骗你，我真的好害怕", "你怕什么？", "这段姻缘是上天安排的，你说我怕不怕？", "又来了......", "是啊！我的心在跳，我的宝剑在嘟，怎么办？", "怎么跟他说？怎么跟他说？"],
-                flag: [true, false, true, false, true, true, false, true, false, true, true],
-                funcInfo: "匹配",
-              websocket: null
-            }
-        },
-        computed: {
-            setShowMarginTop() {
-                let height = document.documentElement.clientHeight;
-                let marginTop = (height - 592) / 2;
-                return {marginTop: marginTop + 'px'};
-            }
-        },
+      components: {
+        modal: Modal
+      },
+      name: "Chat",
+      data() {
+        return {
+          modalFlag: false,
+          information: '',
+          mess: ["我的意中人在附近", "啊，你看到他了？", "没有，因为我的紫青宝剑发出嘟嘟的声音", "哪儿来的嘟嘟声", "哎呀，我知道你听不见我才嘟给你听的嘛", "完了，我好害怕，我不骗你，我真的好害怕", "你怕什么？", "这段姻缘是上天安排的，你说我怕不怕？", "又来了......", "是啊！我的心在跳，我的宝剑在嘟，怎么办？", "怎么跟他说？怎么跟他说？"],
+          flag: [true, false, true, false, true, true, false, true, false, true, true],
+          funcInfo: "匹配",
+          websocket: null
+        }
+      },
+      computed: {
+        setShowMarginTop() {
+          let height = document.documentElement.clientHeight;
+          let marginTop = (height - 592) / 2;
+          return {marginTop: marginTop + 'px'};
+        }
+      },
       mounted: function() {
         this.$nextTick(function () {
           this.websocket = new WebSocket('ws://localhost:7963/njtech/chat');
         })
       },
       methods: {
-            changeBGC1() {
-                let textarea = document.getElementsByClassName('message')[0];
-                let bottomDiv = document.getElementsByClassName('btn-div')[0];
-                textarea.style.backgroundColor = '#ffffff';
-                bottomDiv.style.backgroundColor = '#ffffff';
-            },
-            changeBGC2() {
-                let textarea = document.getElementsByClassName('message')[0];
-                let bottomDiv = document.getElementsByClassName('btn-div')[0];
-                textarea.style.backgroundColor = '#f5f5f5';
-                bottomDiv.style.backgroundColor = '#f5f5f5';
-            },
-            sendMessage() {
+        changeBGC1() {
+          let textarea = document.getElementsByClassName('message')[0];
+          let bottomDiv = document.getElementsByClassName('btn-div')[0];
+          textarea.style.backgroundColor = '#ffffff';
+          bottomDiv.style.backgroundColor = '#ffffff';
+        },
+        changeBGC2() {
+          let textarea = document.getElementsByClassName('message')[0];
+          let bottomDiv = document.getElementsByClassName('btn-div')[0];
+          textarea.style.backgroundColor = '#f5f5f5';
+          bottomDiv.style.backgroundColor = '#f5f5f5';
+        },
+        sendMessage() {
 
-                let message = document.getElementsByClassName('message')[0];
-                let box_show = document.getElementsByClassName('box-show')[0];
-                let this_copy = this;
-                let messStr = message.value.replace(/[\r\n]/g,"").replace(/[\"]/g, "“").replace(/[\"]/g, "”");
-                if (messStr != '') {
-                    let requstJson = `{"type": 1, "content": "${messStr}"}`;
-                    this_copy.websocket.send(requstJson);
-                    this.mess.push(message.value);
-                    this.flag.push(false);
-                    message.value = '';
-                    message.focus();
-                    setTimeout(()=>{
-                        box_show.scrollTop = box_show.scrollHeight;
-                    },0)
-                }
-            },
-            matchOrLeave() {
-                let this_copy = this;
-
-                if (this_copy.funcInfo === '匹配') {
-                    let requstJson = '{"type": 0, "content": ""}';
-                    this_copy.websocket.send(requstJson);
-                } else if (this_copy.funcInfo === '离开') {
-                    let requstJson = '{"type": -1, "content": ""}';
-                    this_copy.websocket.send(requstJson);
-                }
-
-                // 当客户端和服务端连接时调用
-                // webSocket.onopen = function () {
-                //     webSocket.send("Hello Websocket!");
-                // }
-
-                // 客户端受到服务端发来的消息时，会触发onmessage时间，注意mess是一个JSON格式数据
-                this_copy.websocket.onmessage = function (mess) {
-                    let data = JSON.parse(mess.data);
-                    if (data.type === -2) {
-
-                    } else if (data.type === -1) {
-                        this_copy.funcInfo = '匹配';
-
-                    } else if (data.type === 0) {
-                        this_copy.funcInfo = "离开";
-                    } else if (data.type === 1) {
-                        let messFrom = data.content;
-                        this_copy.mess.push(messFrom);
-                        this_copy.flag.push(true);
-                    }
-
-                    setTimeout(() => {
-                        let ele = document.getElementsByClassName('box-show')[0];
-                        ele.scrollTop = ele.scrollHeight;
-                    }, 0)
-                }
-
-                // 客户端受到服务端发送的关闭连接的请求时，出发onclose事件
-                this_copy.websocket.onclose = function(mess) {
-                    console.log(mess);
-                }
-
-                // 如果出现连接，处理，接收，发送数据失败的时候就会触发onerror事件
-                this_copy.websocket.onerror = function (mess) {
-                    console.log(mess);
-                }
-
-            },
-          matchLeaveChangeStyle1() {
-                let ele = document.getElementsByClassName('match-leave')[0];
-                if (this.funcInfo == '匹配') {
-                    ele.style.border = '1px solid #33b4de';
-                    ele.style.backgroundColor = '#33b4de';
-                    ele.style.color = '#ffffff';
-                } else {
-                    ele.style.border = '1px solid #fd4c5d';
-                    ele.style.backgroundColor = '#fd4c5d';
-                    ele.style.color = '#ffffff';
-                }
-          },
-          matchLeaveChangeStyle2() {
-              let ele = document.getElementsByClassName('match-leave')[0];
-              ele.style.border = '1px solid #e1e1e1';
-              ele.style.backgroundColor = '#f5f5f5';
-              ele.style.color = '#606060';
-
+          let message = document.getElementsByClassName('message')[0];
+          let box_show = document.getElementsByClassName('box-show')[0];
+          let this_copy = this;
+          let messStr = message.value.replace(/[\r\n]/g,"").replace(/[\"]/g, "“").replace(/[\"]/g, "”");
+          if (messStr != '') {
+            let requstJson = `{"type": 1, "content": "${messStr}"}`;
+            this_copy.websocket.send(requstJson);
+            this.mess.push(message.value);
+            this.flag.push(false);
+            message.value = '';
+            message.focus();
+            setTimeout(()=>{
+              box_show.scrollTop = box_show.scrollHeight;
+            },0)
           }
+        },
+        matchOrLeave() {
+          let this_copy = this;
+
+          if (this_copy.funcInfo === '匹配') {
+            let requstJson = '{"type": 0, "content": ""}';
+            this_copy.websocket.send(requstJson);
+          } else if (this_copy.funcInfo === '离开') {
+            let requstJson = '{"type": -1, "content": ""}';
+            this_copy.websocket.send(requstJson);
+          }
+
+          // 当客户端和服务端连接时调用
+          // webSocket.onopen = function () {
+          //     webSocket.send("Hello Websocket!");
+          // }
+
+          // 客户端受到服务端发来的消息时，会触发onmessage时间，注意mess是一个JSON格式数据
+          this_copy.websocket.onmessage = function (mess) {
+            let data = JSON.parse(mess.data);
+            let content = data.content;
+            if (data.type === -4) {
+              this_copy.modalFlag = true;
+              this_copy.information = content;
+            } else if (data.type === -3) {
+              this_copy.modalFlag = true;
+              this_copy.information = content;
+            } else if (data.type === -2) {
+              this_copy.modalFlag = true;
+              this_copy.information = content;
+            } else if (data.type === -1) {
+              this_copy.funcInfo = '匹配';
+              if (data.extra !== 'me')
+                this_copy.modalFlag = true;
+              this_copy.information = content;
+            } else if (data.type === 0) {
+              this_copy.funcInfo = "离开";
+              this_copy.modalFlag = true;
+              this_copy.information = content;
+            } else if (data.type === 1) {
+              let messFrom = data.content;
+              this_copy.mess.push(messFrom);
+              this_copy.flag.push(true);
+            }
+
+            setTimeout(() => {
+              let ele = document.getElementsByClassName('box-show')[0];
+              ele.scrollTop = ele.scrollHeight;
+            }, 0)
+          }
+
+          // 客户端受到服务端发送的关闭连接的请求时，出发onclose事件
+          this_copy.websocket.onclose = function(mess) {
+            console.log(mess);
+          }
+
+          // 如果出现连接，处理，接收，发送数据失败的时候就会触发onerror事件
+          this_copy.websocket.onerror = function (mess) {
+            console.log(mess);
+          }
+
+        },
+        matchLeaveChangeStyle1() {
+          let ele = document.getElementsByClassName('match-leave')[0];
+          if (this.funcInfo == '匹配') {
+            ele.style.border = '1px solid #33b4de';
+            ele.style.backgroundColor = '#33b4de';
+            ele.style.color = '#ffffff';
+          } else {
+            ele.style.border = '1px solid #fd4c5d';
+            ele.style.backgroundColor = '#fd4c5d';
+            ele.style.color = '#ffffff';
+          }
+        },
+        matchLeaveChangeStyle2() {
+          let ele = document.getElementsByClassName('match-leave')[0];
+          ele.style.border = '1px solid #e1e1e1';
+          ele.style.backgroundColor = '#f5f5f5';
+          ele.style.color = '#606060';
+
+        },
+        closeModal() {
+          this.modalFlag = false;
         }
+      }
     }
 </script>
 

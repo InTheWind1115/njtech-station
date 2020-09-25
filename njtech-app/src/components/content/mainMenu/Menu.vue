@@ -1,6 +1,6 @@
 <template>
     <div id="menu" :style="setHeight">
-        <profile></profile>
+        <profile :change="true"></profile>
         <menu-item path="/square" iconfont="" name="广场"></menu-item>
         <menu-item path="/chat" iconfont="" name="匿名聊天"></menu-item>
         <menu-item path="/buy" iconfont="" name="二手交易"></menu-item>

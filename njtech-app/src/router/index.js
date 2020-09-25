@@ -8,9 +8,11 @@ const Profile = () => import('../views/profile/Profile')
 const Square = () => import('../views/square/Square')
 const Register = () => import('../views/register/Register')
 const Enroll = () => import('../views/enroll/Enroll')
+const Email = () => import('../views/email/Email')
+const Us = () => import('../views/us/Us')
+const Privacy = () => import('../views/privacy/Privacy')
 
 Vue.use(VueRouter)
-
   const routes = [
     {
       path: '/',
@@ -39,12 +41,22 @@ Vue.use(VueRouter)
     }, {
       path: '/enroll',
       component: Enroll
+    }, {
+      path: '/email',
+      component: Email
+    }, {
+      path: '/us',
+      component: Us
+    }, {
+      path: '/privacy',
+      component: Privacy
     }
   ]
 
 const router = new VueRouter({
   routes,
-  mode: 'history'
+  mode: 'history',
+  base: '/page'
 })
 
 export default router

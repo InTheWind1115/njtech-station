@@ -24,7 +24,8 @@
 </template>
 
 <script>
-import axios from 'axios'
+  import axios from 'axios';
+  axios.defaults.baseURL = 'http://localhost:7963/njtech/';
 export default {
   name: "enroll.vue",
   data() {
@@ -37,9 +38,7 @@ export default {
       let phone = document.getElementById("phone").value;
       let pwd = document.getElementById("password").value;
       let paras = {phone: phone, userPwd: pwd};
-      console.log(paras);
-      // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-      axios.post("http://localhost:7963/njtech/signin", `phone=${phone}&userPwd=${pwd}`)
+      axios.post("signin", `phone=${phone}&userPwd=${pwd}`)
         .then(res=>{
           let flag = res.data;
           console.log(flag);

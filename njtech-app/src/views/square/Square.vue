@@ -2,7 +2,7 @@
     <div>
         广场
         <button type="button" @click="showModal">打开Modal</button>
-        <modal v-show="isModalVisble" @close="closeModal"></modal>
+        <modal :show="isModalVisble" @close="closeModal"></modal>
     </div>
 
 </template>
@@ -21,7 +21,9 @@
         },
         methods: {
             showModal() {
-                this.isModalVisble = true;
+                // this.isModalVisble = true;
+                this.bus.$emit('change', false);
+                this.bus.$emit('userName', '凉风有信');
             },
             closeModal() {
                 this.isModalVisble = false;
