@@ -3,12 +3,12 @@
         <div class="portrait">
             <img src="@/assets/images/head.jpg" alt="">
         </div>
-        <div class="regLog" v-if="change">
+        <div class="regLog" v-if="!showNameFlag">
             <div @click="signIn">登录</div>
             <div @click="signUp">注册</div>
         </div>
         <div class="user-name" v-else>
-            {{username}}
+            {{showUsrName}}
         </div>
     </div>
 </template>
@@ -18,20 +18,17 @@
       name: "Profile",
         data() {
           return {
-              username: '',
-              change: true
+              showNameFlag: false
           }
         },
         mounted() {
           let _this = this;
 
-          _this.bus.$on('change', function (flag) {
-            _this.change = flag;
+          _this.bus.$on('changeProfile', function (flag) {
+              console.log("changeProfile执行");
+            _this.showNameFlag = flag;
           });
 
-          _this.bus.$on('userName', function (name) {
-              _this.username = name;
-          })
         },
         methods: {
         signIn() {
@@ -40,7 +37,12 @@
         signUp() {
           this.$router.push('/register');
         }
-      }
+      },
+        computed: {
+          showUsrName() {
+              return this.$store.state.usrname;
+          }
+        }
     }
 </script>
 
@@ -48,6 +50,8 @@
     .profile {
         width: 180px;
         margin: 0px auto;
+        border-bottom: 1px solid #e5e9ef;
+        margin-bottom: 10px;
 
         .portrait {
             width: 70px;
@@ -88,11 +92,11 @@
 
         .user-name {
             height: 26px;
-            width: 70px;
+            width: 100%;
+            text-align: center;
             margin: 0 auto;
             line-height: 26px;
             font-size: 15px;
-
         }
     }
 </style>

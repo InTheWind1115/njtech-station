@@ -1,6 +1,5 @@
 <template>
     <div class="home" :style="homeHeight">
-        <modal :show="modalFlag" @close="closeModal" :mess="information"></modal>
         <div class="home-header">
             <div class="head">
                 <div class="head-drop">修改头像</div>
@@ -8,33 +7,24 @@
                 <label for="head-input" @mouseover="showDrop" @mouseout="hideDrop" />
                 <input id="head-input" type="file" >
             </div>
-            <span class="username">凉风有信</span>
+            <span class="username">{{showUsrName}}</span>
         </div>
         <div class="home-body">
             <div class="home-body-usrphone">
-                <input disabled type="text" class="home-body-usrphone-input">
+                <input disabled type="text" class="home-body-usrphone-input" :value="showUsrPhone">
                 <span class="home-body-usrphone-info">用户手机</span>
             </div>
 
             <div class="home-body-email">
-                <input disabled type="text" class="home-body-email-input">
+                <input disabled type="text" class="home-body-email-input" :value="showUsrEmail">
                 <span class="home-body-email-info">学校邮箱</span>
-                <div class="info2 code-btn" @click="pushEmail">去绑定</div>
-                <!--                <div class="back-info" v-show="backInfo">-->
-                <!--                    <div class="email-code">-->
-                <!--                        <input type="text" class="email-code-input" placeholder="请输入验证码">-->
-                <!--                        <span class="info1">验证码</span>-->
-                <!--                        <div class="info2" @click="confirmEmailCode">确定</div>-->
-                <!--                    </div>-->
-                <!--                </div>-->
+                <div class="home-body-email-btn" @click="pushEmail" @mouseover="stopBindEmail">去绑定</div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-    import axios from 'axios';
-    axios.defaults.baseURL = 'http://39.102.69.4:8080/njtech/';
     import Modal from "@/components/common/modal/Modal";
     export default {
         name: "Profile",
@@ -52,6 +42,15 @@
         computed: {
             homeHeight() {
                 return {height: document.documentElement.clientHeight + 'px'}
+            },
+            showUsrName() {
+                return this.$store.state.usrname;
+            },
+            showUsrPhone() {
+                return this.$store.state.usrphone;
+            },
+            showUsrEmail() {
+                return this.$store.state.usremail;
             }
         },
         methods: {
@@ -61,81 +60,18 @@
             hideDrop() {
                 document.getElementsByClassName('head-drop')[0].style.display = 'none';
             },
-            // getEmailCode() {
-            //     if (!this.codeBtnFlag) {
-            //         return;
-            //     }
-            //     this.codeBtnFlag = false;
-            //     let btn = document.getElementsByClassName('code-btn')[0];
-            //     let _this = this;
-            //     _this.backInfo = true;
-            //     let email = document.getElementsByClassName('email-input')[0].value;
-            //     axios.post("sendmailcode", `email=${email}`).then(res => {
-            //         let type = res.data.type;
-            //         let content = res.data.content;
-            //         if (type === -2) {
-            //             _this.modalFlag = true;
-            //             _this.information = content;
-            //         } else if (type === -1) {
-            //             _this.modalFlag = true;
-            //             _this.information = content;
-            //         } else if (type === 0) {
-            //             _this.modalFlag = true;
-            //             _this.information = content;
-            //         } else {
-            //             _this.modalFlag = true;
-            //             _this.information = content;
-            //         }
-            //     })
-            //
-            //     let second = 60;
-            //     let countDown = setInterval(function() {
-            //         btn.style.backgroundColor = '#f5f5f5';
-            //         btn.style.color = '#b8b8b8';
-            //         btn.style.borderColor = '#d9d9d9';
-            //         btn.style.cursor = 'not-allowed';
-            //         btn.innerText = second + 's..';
-            //         second--;
-            //         if (second == -1) {
-            //             clearTimeout(countDown);
-            //             btn.innerText = '获取验证码';
-            //             _this.codeBtnFlag = true;
-            //             btn.style.backgroundColor = '#00a1d6';
-            //             btn.style.color = '#ffffff';
-            //             btn.style.borderColor = '#00a1d6';
-            //             btn.style.cursor = 'pointer';
-            //         }
-            //     }, 1000);
-            // },
-            // confirmEmailCode() {
-            //     let _this = this;
-            //     let code = document.getElementsByClassName('email-code-input')[0].value;
-            //     axios.post("confirmmailcode", `code=${code}`).then(res => {
-            //         let type = res.data.type;
-            //         let content = res.data.content;
-            //         if (type === -2) {
-            //             _this.modalFlag = true;
-            //             _this.information = content;
-            //         } else if (type === -1) {
-            //             _this.modalFlag = true;
-            //             _this.information = content;
-            //
-            //         } else if (type === 0) {
-            //             _this.modalFlag = true;
-            //             _this.information = content;
-            //
-            //         } else {
-            //             _this.modalFlag = true;
-            //             _this.information = content;
-            //
-            //         }
-            //     })
-            // },
-            // closeModal() {
-            //     this.modalFlag = false;
-            // }
             pushEmail() {
+                if (this.$store.state.usremail !== '') {
+                    return;
+                }
                 this.$router.push('/email');
+            },
+            stopBindEmail() {
+                console.log(this.$store.state.usremail);
+                if (this.$store.state.usremail !== '') {
+                    let btn = document.getElementsByClassName('home-body-email-btn')[0];
+                    btn.style.cursor = 'not-allowed';
+                }
             }
         }
     }
@@ -259,7 +195,7 @@
                 }
 
 
-                .info2 {
+                .home-body-email-btn {
                     position: absolute;
                     width: 80px;
                     top: 0;
@@ -273,7 +209,7 @@
                     font-size: 14px;
                 }
 
-                .info2:hover {
+                .home-body-email-btn:hover {
                     background-color: #33b4de;
                     cursor: pointer;
                 }
@@ -287,7 +223,6 @@
                         position: relative;
                         height: 30px;
                         width: 600px;
-                        /*background-color: #00a1d6;*/
 
                         input {
                             height: 30px;
@@ -314,7 +249,7 @@
                         }
 
 
-                        .info2 {
+                        .home-body-email-btn {
                             position: absolute;
                             width: 40px;
                             top: 0;
@@ -328,7 +263,7 @@
                             font-size: 14px;
                         }
 
-                        .info2:hover {
+                        .home-body-email-btn:hover {
                             background-color: #33b4de;
                             cursor: pointer;
                         }

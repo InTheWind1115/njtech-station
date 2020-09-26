@@ -110,6 +110,12 @@
           } else {
             _this.bus.$emit('showModal');
             _this.modalInfo = content;
+            _this.$store.commit('changeUsrInfo', {
+              usremail: _this.usremail,
+            });
+            setTimeout(function () {
+              _this.$router.replace('/profile');
+            }, 2000);
           }
         })
       }

@@ -1,6 +1,10 @@
 <template>
     <div id="chat-root" :style="setShowMarginTop">
-        <modal :show="modalFlag" :mess="information" @close="closeModal"></modal>
+        <modal>
+            <template v-slot:information>
+                <div>{{modalInfo}}</div>
+            </template>
+        </modal>
         <div class="box-top">
             <span>对方：紫霞仙子</span>
         </div>
@@ -13,11 +17,16 @@
                     </div>
                 </div>
                 <div v-else>
+<!--                    <div class="info-right">-->
+<!--                        <img src="@/assets/images/zxc.png" alt="">-->
+<!--                        <div class="reletive-info clearfix">-->
+<!--                            <span class="messageSended">{{mess[index]}}</span>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
                     <div class="info-right">
+                        <span class="messageSended">{{mess[index]}}</span>
                         <img src="@/assets/images/zxc.png" alt="">
-                        <div class="reletive-info clearfix">
-                            <span class="messageSended">{{mess[index]}}</span>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -37,7 +46,7 @@
   import Modal from "@/components/common/modal/Modal";
     export default {
       components: {
-        modal: Modal
+        Modal
       },
       name: "Chat",
       data() {
@@ -47,7 +56,8 @@
           mess: ["我的意中人在附近", "啊，你看到他了？", "没有，因为我的紫青宝剑发出嘟嘟的声音", "哪儿来的嘟嘟声", "哎呀，我知道你听不见我才嘟给你听的嘛", "完了，我好害怕，我不骗你，我真的好害怕", "你怕什么？", "这段姻缘是上天安排的，你说我怕不怕？", "又来了......", "是啊！我的心在跳，我的宝剑在嘟，怎么办？", "怎么跟他说？怎么跟他说？"],
           flag: [true, false, true, false, true, true, false, true, false, true, true],
           funcInfo: "匹配",
-          websocket: null
+          websocket: null,
+          modalInfo: ''
         }
       },
       computed: {
@@ -59,7 +69,7 @@
       },
       mounted: function() {
         this.$nextTick(function () {
-          this.websocket = new WebSocket('ws://localhost:7963/njtech/chat');
+          this.websocket = new WebSocket('ws://39.102.69.4:8080/njtech/chat');
         })
       },
       methods: {
@@ -94,14 +104,14 @@
           }
         },
         matchOrLeave() {
-          let this_copy = this;
+          let _this = this;
 
-          if (this_copy.funcInfo === '匹配') {
+          if (_this.funcInfo === '匹配') {
             let requstJson = '{"type": 0, "content": ""}';
-            this_copy.websocket.send(requstJson);
-          } else if (this_copy.funcInfo === '离开') {
+            _this.websocket.send(requstJson);
+          } else if (_this.funcInfo === '离开') {
             let requstJson = '{"type": -1, "content": ""}';
-            this_copy.websocket.send(requstJson);
+            _this.websocket.send(requstJson);
           }
 
           // 当客户端和服务端连接时调用
@@ -110,31 +120,32 @@
           // }
 
           // 客户端受到服务端发来的消息时，会触发onmessage时间，注意mess是一个JSON格式数据
-          this_copy.websocket.onmessage = function (mess) {
+          _this.websocket.onmessage = function (mess) {
             let data = JSON.parse(mess.data);
             let content = data.content;
+            console.log(content);
             if (data.type === -4) {
-              this_copy.modalFlag = true;
-              this_copy.information = content;
+                _this.modalInfo = content;
+                _this.bus.$emit('showModal');
             } else if (data.type === -3) {
-              this_copy.modalFlag = true;
-              this_copy.information = content;
+                _this.modalInfo = content;
+                _this.bus.$emit('showModal');
             } else if (data.type === -2) {
-              this_copy.modalFlag = true;
-              this_copy.information = content;
+                _this.modalInfo = content;
+                _this.bus.$emit('showModal');
             } else if (data.type === -1) {
-              this_copy.funcInfo = '匹配';
+                _this.funcInfo = '匹配';
               if (data.extra !== 'me')
-                this_copy.modalFlag = true;
-              this_copy.information = content;
+                _this.bus.$emit('showModal');
+              _this.modalInfo = content;
             } else if (data.type === 0) {
-              this_copy.funcInfo = "离开";
-              this_copy.modalFlag = true;
-              this_copy.information = content;
+              _this.funcInfo = "离开";
+              _this.modalInfo = content;
+              _this.bus.$emit('showModal');
             } else if (data.type === 1) {
               let messFrom = data.content;
-              this_copy.mess.push(messFrom);
-              this_copy.flag.push(true);
+              _this.mess.push(messFrom);
+              _this.flag.push(true);
             }
 
             setTimeout(() => {
@@ -144,12 +155,12 @@
           }
 
           // 客户端受到服务端发送的关闭连接的请求时，出发onclose事件
-          this_copy.websocket.onclose = function(mess) {
+          _this.websocket.onclose = function(mess) {
             console.log(mess);
           }
 
           // 如果出现连接，处理，接收，发送数据失败的时候就会触发onerror事件
-          this_copy.websocket.onerror = function (mess) {
+          _this.websocket.onerror = function (mess) {
             console.log(mess);
           }
 
@@ -272,67 +283,60 @@
             }
 
             .info-right {
-                position: relative;
+                display: flex;
+                justify-content: flex-end;
                 width: 480px;
                 margin-bottom: 15px;
 
                 img {
-                    position: absolute;
                     width: 34px;
                     height: 34px;
-                    right: 0;
-                    top: 0;
                     border-radius: 2px;
                 }
 
-                .reletive-info {
+                .messageSended {
                     position: relative;
-                    top: 0;
-                    right: 42px;
-
-                    .messageSended {
-                        float: right;
-                        /*position: relative;*/
-                        box-sizing: border-box;
-                        display: inline-block;
-                        background-color: #9eea6a;
-                        color: #232323;
-                        font-size: 14px;
-                        border-radius: 4px;
-                        min-height: 34px;
-                        max-width: 287px;
-                        padding: 11px 10px 11px 10px;
-                    }
-
-                    .messageSended:after {
-                        position: absolute;
-                        right: -8px;
-                        top: 9px;
-                        content: "";
-                        width: 0;
-                        height: 0;
-                        border-width: 8px 0px 8px 8px;
-                        border-style: solid;
-                        border-color: transparent #9eea6a transparent;
-                    }
-
-                    .messageSended:hover {
-                        background-color: #98e165;
-                    }
-
-                    .messageSended:hover:after {
-                        position: absolute;
-                        right: -8px;
-                        top: 9px;
-                        content: "";
-                        width: 0;
-                        height: 0;
-                        border-width: 8px 0px 8px 8px;
-                        border-style: solid;
-                        border-color: transparent #98e165 transparent;
-                    }
-
+                    margin-right: 8px;
+                    box-sizing: border-box;
+                    display: inline-block;
+                    background-color: #9eea6a;
+                    color: #232323;
+                    font-size: 14px;
+                    border-radius: 4px;
+                    min-height: 34px;
+                    max-width: 287px;
+                    padding: 11px 10px 11px 10px;
                 }
+
+                .messageSended:after {
+                    position: absolute;
+                    right: -7px;
+                    top: 9px;
+                    content: "";
+                    width: 0;
+                    height: 0;
+                    border-width: 8px 0px 8px 8px;
+                    border-style: solid;
+                    border-color: transparent #9eea6a transparent;
+                }
+
+                .messageSended:hover {
+                    background-color: #98e165;
+                }
+
+                .messageSended:hover:after {
+                    position: absolute;
+                    right: -8px;
+                    top: 9px;
+                    content: "";
+                    width: 0;
+                    height: 0;
+                    border-width: 8px 0px 8px 8px;
+                    border-style: solid;
+                    border-color: transparent #98e165 transparent;
+                }
+
+
             }
 
 

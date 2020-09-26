@@ -45,18 +45,16 @@
 <style scoped lang="less">
 
     .item {
-        // background-color: pink;
         height: 42px;
 
         div {
             float: left;
             height: 100%;
             line-height: 42px;
-            // background-color: burlywood;
         }
 
         .item-one {
-            width: 6px;
+            width: 4px;
             // background-color: #c62f2f;
         }
 
@@ -64,12 +62,14 @@
             margin-left: 14px;
             margin-right: 7px;
             font-family: 'icomoon';
-            font-size: 22px;
+            font-size: 16px;
+            line-height: 42px;
             color: #5c5c5c;
         }
 
         .item-three {
             font-size: 14px;
+            line-height: 42px;
             color: #5c5c5c;
         }
     }

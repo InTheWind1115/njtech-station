@@ -1,6 +1,9 @@
 <template>
   <div id="reg">
-    <modal :show="modalFlag" @close="closeModal" :mess="information">
+    <modal>
+      <template v-slot:information>
+        {{modalInfo}}
+      </template>
     </modal>
     <div class="title">
       注册
@@ -46,13 +49,11 @@
 </template>
 
 <script>
-  import axios from 'axios';
-  axios.defaults.baseURL = 'http://39.102.69.4:8080/njtech/';
   import Modal from "@/components/common/modal/Modal";
 export default {
   name: "Register",
   components: {
-    modal: Modal
+    Modal
   },
   data() {
     return {
@@ -67,7 +68,8 @@ export default {
       confirmCode: '',
       nameFlag: false,
       pwdFlag: false,
-      pwdLenFlag: false
+      pwdLenFlag: false,
+      modalInfo: ''
     }
   },
   methods: {
@@ -150,27 +152,28 @@ export default {
       let codeInfo = document.getElementById('code-info');
 
       let phoneNumber = this_copy.phone;
-      // console.log(phoneNumber + "@@@@@@@@@@@@@@@");
-      // 这里的代码是向后台发送请求，请求验证码
-      axios.get("phonecode", {params: {
-        phone: phoneNumber
-        }}).then(res => {
-        // console.log(res);
+      this_copy.$myRequest({
+        url: 'phonecode',
+        method: 'post',
+        data: {
+          phone: phoneNumber
+        }
+      }).then(res => {
         if (res.data === 0)
           document.getElementById('phone-info').innerText = '此手机号码已被注册';
       }).catch(err => {
-
+        console.log(err);
       });
 
       let second = 60;
+      btn.innerText = second + 's..';
       codeInfo.innerText = '验证码五分钟内有效';
+      btn.style.backgroundColor = '#f5f5f5';
+      btn.style.color = '#b8b8b8';
+      btn.style.borderColor = '#d9d9d9';
+      btn.style.cursor = 'not-allowed';
       let countDown = setInterval(function() {
-        btn.style.backgroundColor = '#f5f5f5';
-        btn.style.color = '#b8b8b8';
-        btn.style.borderColor = '#d9d9d9';
-        btn.style.cursor = 'not-allowed';
-        btn.innerText = second + 's..';
-        second--;
+        btn.innerText = --second + 's..';
         if (second == -1) {
           clearTimeout(countDown);
           btn.innerText = '点击获取';
@@ -202,14 +205,23 @@ export default {
       let this_copy = this;
       let code = document.getElementById('code-input').value;
       if (this.nameFlag && this.pwdFlag && this.pwdLenFlag) {
-        axios.post("signup", `username=${this_copy.username}&userPwd=${this_copy.userpwd}&phone=${this_copy.phone}&code=${code}`).then(res => {
+        this_copy.$myRequest({
+          url: 'signup',
+          method: 'get',
+          params: {
+            username: this_copy.username,
+            userPwd: this_copy.userpwd,
+            phone: this_copy.phone,
+            code: code
+          }
+        }).then(res => {
           if (res.data === 0) {
             document.getElementById('code-info').innerText = '这个验证码已经失效';
           } else if (res.data === -1) {
             document.getElementById('code-info').innerText = '您的验证码输入错误';
           } else if (res.data === 1) {
-            this_copy.information = '注册成功，2s后跳转到登录界面。';
-            this_copy.modalFlag = true;
+            this_copy.modalInfo = '注册成功，2s后跳转到登录界面。';
+            this_copy.bus.$emit('showModal');
             setTimeout(function () {
               this_copy.$router.replace('/enroll');
             }, 2000);
@@ -219,12 +231,9 @@ export default {
         return;
     },
     showModal1() {
-      this.modalFlag = true;
-      this.information = '希望同学们可以喜欢这个地方，畅所欲言！';
+      this.modalInfo = '希望同学们可以喜欢这个地方，畅所欲言！';
+      this.bus.$emit('showModal');
     },
-    closeModal() {
-      this.modalFlag = false;
-    }
   }
 }
 </script>

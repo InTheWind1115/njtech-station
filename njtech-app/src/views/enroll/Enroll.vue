@@ -30,7 +30,7 @@ export default {
     return {
       usrphone: '',
       usrpwd: '',
-      flag: false
+      flag: false //用来记录密码是正确还是错误,然后显示密码错误
     }
   },
   methods: {
@@ -44,11 +44,16 @@ export default {
           userPwd: _this.usrpwd
         }
       }).then(res=>{
-        let flag = res.data;
-        console.log(flag);
+        let flag = res.data.flag;
         if(flag === true) {
-          this.$router.replace('/square');
           this.flag = false;
+          this.$router.replace('/square');
+          _this.$store.commit('changeUsrInfo', {
+            usrname: res.data.userName,
+            usrphone: res.data.phone,
+            usremail: res.data.email === null ? '' : res.data.email,
+          });
+          _this.bus.$emit('changeProfile', true);
         } else {
           this.flag = true;
         }

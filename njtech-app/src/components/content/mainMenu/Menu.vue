@@ -2,10 +2,10 @@
     <div id="menu" :style="setHeight">
         <profile :change="true"></profile>
         <menu-item path="/square" iconfont="" name="广场"></menu-item>
-        <menu-item path="/chat" iconfont="" name="匿名聊天"></menu-item>
-        <menu-item path="/buy" iconfont="" name="二手交易"></menu-item>
-        <menu-item path="/data" iconfont="" name="学习资料"></menu-item>
-        <menu-item path="/friend" iconfont="" name="同性交友"></menu-item>
+        <menu-item path="/chat" iconfont="" name="匹配聊天"></menu-item>
+<!--        <menu-item path="/buy" iconfont="" name="二手交易"></menu-item>-->
+<!--        <menu-item path="/data" iconfont="" name="学习资料"></menu-item>-->
+<!--        <menu-item path="/friend" iconfont="" name="同性交友"></menu-item>-->
         <menu-item path="/profile" iconfont="" name="个人资料"></menu-item>
     </div>
 </template>

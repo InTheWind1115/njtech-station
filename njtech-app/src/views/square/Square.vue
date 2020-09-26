@@ -1,8 +1,6 @@
 <template>
     <div>
         广场
-        <button type="button" @click="showModal">打开Modal</button>
-        <modal></modal>
     </div>
 
 </template>
@@ -15,10 +13,6 @@
             modal: Modal
         },
         methods: {
-            showModal() {
-                this.bus.$emit('change', false);
-                this.bus.$emit('userName', '凉风有信');
-            }
         }
     }
 </script>

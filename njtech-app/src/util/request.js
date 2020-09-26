@@ -1,6 +1,22 @@
 import axios from 'axios';
-axios.defaults.baseURL = "http://localhost:7963/njtech/";
+axios.defaults.baseURL = "http://39.102.69.4:8080/njtech/";
 export const myRequest = options => {
+  if (options.method === 'get') {
+    return axios({
+      url: options.url,
+      method: 'get',
+      headers: options.headers || {},
+      //params用于get请求时
+      params: options.method === 'get'? options.params : {},
+      //data用于post请求时
+      data: options.method === 'post'? options.data : {},
+      // `responseType` 表示服务器响应的数据类型，可以是 'arraybuffer', 'blob', 'document', 'json', 'text', 'stream'
+      responseType: options.responseType || 'json',
+      // 跨域请求时是否携带凭证
+      // 在跨域请求时带上cookie，否则后端每次收到的session都不一样
+      withCredentials: true,
+    })
+  }
   return axios({
     url: options.url,
     method: options.method || 'get',
