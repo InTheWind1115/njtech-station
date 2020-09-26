@@ -9,7 +9,6 @@
 
         <div class="modal-body">
           <slot name="information">
-            {{mess}}
           </slot>
         </div>
 

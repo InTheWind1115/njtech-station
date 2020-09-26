@@ -1,6 +1,6 @@
 import axios from 'axios';
 axios.defaults.baseURL = "http://localhost:7963/njtech/";
-export const myRequest = (options) => {
+export const myRequest = options => {
   return axios({
     url: options.url,
     method: options.method || 'get',
@@ -22,7 +22,7 @@ export const myRequest = (options) => {
       for (let key in data) {
         str = str + '&' +  key + '=' + data[key]
       }
-      console.log("str" + str)
+      console.log("str:" + str)
       return str.substring(1, str.length);
     }],
   })

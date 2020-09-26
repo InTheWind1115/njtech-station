@@ -10,7 +10,7 @@
       </div>
       <div class="email-body-code">
         <input v-model.lazy="usrcode" type="text" class="email-body-code-input input-placeholder" placeholder="请输入验证码">
-        <div class="email-body-code-btn">绑定</div>
+        <div class="email-body-code-btn" @click="confirmMailCode">绑定</div>
       </div>
     </div>
     <modal>
@@ -39,6 +39,7 @@
     },
     methods: {
       getEmailCode() {
+        console.log(this.usremail)
         if (!this.codeBtnFlag)
           return;
         this.codeBtnFlag = false;
@@ -46,23 +47,24 @@
         let _this = this;
         _this.$myRequest({
           url: 'sendmailcode',
-          params: {
+          method: 'post',
+          data: {
             email: _this.usremail
           }
         }).then(res => {
           let type = res.data.type;
           let content = res.data.content;
           if (type === -2) {
-            _this.bus.$emit('modalShow');
+            _this.bus.$emit('showModal');
             _this.modalInfo = content;
           } else if (type === -1) {
-            _this.bus.$emit('modalShow');
+            _this.bus.$emit('showModal');
             _this.modalInfo = content;
           } else if (type === 0) {
-            _this.bus.$emit('modalShow');
+            _this.bus.$emit('showModal');
             _this.modalInfo = content;
           } else {
-            _this.bus.$emit('modalShow');
+            _this.bus.$emit('showModal');
             _this.modalInfo = content;
           }
         });
@@ -85,26 +87,32 @@
           }
         }, 1000);
       },
-      confirmEmailCode() {
+      confirmMailCode() {
         let _this = this;
-        axios.post("confirmmailcode", `code=${_this.usrcode}`).then(res => {
+        _this.$myRequest({
+          url: 'confirmmailcode',
+          method: 'post',
+          data: {
+            code: _this.usrcode
+          }
+        }).then(res => {
           let type = res.data.type;
           let content = res.data.content;
           if (type === -2) {
-            _this.bus.$emit('modalShow');
+            _this.bus.$emit('showModal');
             _this.modalInfo = content;
           } else if (type === -1) {
-            _this.bus.$emit('modalShow');
+            _this.bus.$emit('showModal');
             _this.modalInfo = content;
           } else if (type === 0) {
-            _this.bus.$emit('modalShow');
+            _this.bus.$emit('showModal');
             _this.modalInfo = content;
           } else {
-            _this.bus.$emit('modalShow');
+            _this.bus.$emit('showModal');
             _this.modalInfo = content;
           }
-        });
-      },
+        })
+      }
     }
   }
 </script>

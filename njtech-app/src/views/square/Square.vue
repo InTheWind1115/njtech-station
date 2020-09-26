@@ -14,19 +14,10 @@
         components: {
             modal: Modal
         },
-        data() {
-            return {
-                isModalVisble: false
-            }
-        },
         methods: {
             showModal() {
-                // this.isModalVisble = true;
                 this.bus.$emit('change', false);
                 this.bus.$emit('userName', '凉风有信');
-            },
-            closeModal() {
-                this.isModalVisble = false;
             }
         }
     }
