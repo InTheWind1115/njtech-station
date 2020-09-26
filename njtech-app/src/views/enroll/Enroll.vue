@@ -4,10 +4,10 @@
       登录
     </div>
     <div class="account input-placeholder focus-color distance">
-      <input id="phone" type="text" placeholder="你的手机号">
+      <input v-model.lazy="usrphone" id="phone" type="text" placeholder="你的手机号">
     </div>
     <div class="pwd input-placeholder focus-color distance">
-      <input id="password" class="input-placeholder focus-color" type="password" placeholder="密码" @input="changeFlag">
+      <input v-model.lazy="usrpwd" id="password" class="input-placeholder focus-color" type="password" placeholder="密码" @input="changeFlag">
       <span v-show="flag" >密码错误</span>
     </div>
     <div class="agreement">
@@ -24,35 +24,37 @@
 </template>
 
 <script>
-  import axios from 'axios';
-  axios.defaults.baseURL = 'http://localhost:7963/njtech/';
 export default {
   name: "enroll.vue",
   data() {
     return {
+      usrphone: '',
+      usrpwd: '',
       flag: false
     }
   },
   methods: {
     enter() {
-      let phone = document.getElementById("phone").value;
-      let pwd = document.getElementById("password").value;
-      let paras = {phone: phone, userPwd: pwd};
-      axios.post("signin", `phone=${phone}&userPwd=${pwd}`)
-        .then(res=>{
-          let flag = res.data;
-          console.log(flag);
-          if(flag === true) {
-            console.log('###########');
-            this.$router.replace('/square');
-            this.flag = false;
-          } else {
-            this.flag = true;
-          }
-        })
-        .catch(err=>{
-          console.log(err)
-        })
+      let _this = this;
+      _this.$myRequest({
+        url: 'signin',
+        method: 'post',
+        data: {
+          phone: _this.usrphone,
+          userPwd: _this.usrpwd
+        }
+      }).then(res=>{
+        let flag = res.data;
+        console.log(flag);
+        if(flag === true) {
+          this.$router.replace('/square');
+          this.flag = false;
+        } else {
+          this.flag = true;
+        }
+      }).catch(err=>{
+        console.log(err)
+      })
     },
     reg() {
       this.$router.replace('/register');

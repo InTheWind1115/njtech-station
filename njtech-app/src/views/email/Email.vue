@@ -5,20 +5,107 @@
     </div>
     <div class="email-body">
       <div class="email-body-email">
-        <input type="text" class="email-body-email-input input-placeholder" placeholder="请输入工大邮箱">
-        <div class="email-body-email-btn">获取验证码</div>
+        <input v-model.lazy="usremail" type="text" class="email-body-email-input input-placeholder" placeholder="请输入工大邮箱">
+        <div class="email-body-email-btn" @click="getEmailCode">{{usremailInfo}}</div>
       </div>
       <div class="email-body-code">
-        <input type="text" class="email-body-code-input input-placeholder" placeholder="请输入验证码">
+        <input v-model.lazy="usrcode" type="text" class="email-body-code-input input-placeholder" placeholder="请输入验证码">
         <div class="email-body-code-btn">绑定</div>
       </div>
     </div>
+    <modal>
+      <template v-slot:information>
+        {{modalInfo}}
+      </template>
+    </modal>
   </div>
 </template>
 
 <script>
+  import Modal from "@/components/common/modal/Modal";
   export default {
-    name: "email"
+    components: {
+      Modal
+    },
+    name: "email",
+    data() {
+      return {
+        usremail: '',
+        usrcode: '',
+        codeBtnFlag: true,
+        modalInfo: '',
+        usremailInfo: '获取验证码'
+      }
+    },
+    methods: {
+      getEmailCode() {
+        if (!this.codeBtnFlag)
+          return;
+        this.codeBtnFlag = false;
+        let btn = document.getElementsByClassName('email-body-email-btn')[0];
+        let _this = this;
+        _this.$myRequest({
+          url: 'sendmailcode',
+          params: {
+            email: _this.usremail
+          }
+        }).then(res => {
+          let type = res.data.type;
+          let content = res.data.content;
+          if (type === -2) {
+            _this.bus.$emit('modalShow');
+            _this.modalInfo = content;
+          } else if (type === -1) {
+            _this.bus.$emit('modalShow');
+            _this.modalInfo = content;
+          } else if (type === 0) {
+            _this.bus.$emit('modalShow');
+            _this.modalInfo = content;
+          } else {
+            _this.bus.$emit('modalShow');
+            _this.modalInfo = content;
+          }
+        });
+        let second = 10;
+        btn.style.backgroundColor = '#f5f5f5';
+        btn.style.color = '#b8b8b8';
+        btn.style.borderColor = '#d9d9d9';
+        btn.style.cursor = 'not-allowed';
+        _this.usremailInfo = second + 's..';
+        let countDown = setInterval(function() {
+          _this.usremailInfo = --second + 's..';
+          if (second == -1) {
+            clearTimeout(countDown);
+            _this.usremailInfo = '获取验证码';
+            _this.codeBtnFlag = true;
+            btn.style.backgroundColor = '#00a1d6';
+            btn.style.color = '#ffffff';
+            btn.style.borderColor = '#00a1d6';
+            btn.style.cursor = 'pointer';
+          }
+        }, 1000);
+      },
+      confirmEmailCode() {
+        let _this = this;
+        axios.post("confirmmailcode", `code=${_this.usrcode}`).then(res => {
+          let type = res.data.type;
+          let content = res.data.content;
+          if (type === -2) {
+            _this.bus.$emit('modalShow');
+            _this.modalInfo = content;
+          } else if (type === -1) {
+            _this.bus.$emit('modalShow');
+            _this.modalInfo = content;
+          } else if (type === 0) {
+            _this.bus.$emit('modalShow');
+            _this.modalInfo = content;
+          } else {
+            _this.bus.$emit('modalShow');
+            _this.modalInfo = content;
+          }
+        });
+      },
+    }
   }
 </script>
 

@@ -25,16 +25,21 @@
 <script>
   export default {
     name: "Modal",
-    props: ['show', 'mess'],
     data () {
       return {
-
+        show: false
       }
     },
     methods: {
       close() {
-        this.$emit('close');
+        this.show = false;
       }
+    },
+    mounted() {
+      let _this = this;
+      this.bus.$on('showModal', function () {
+        _this.show = true;
+      })
     }
   }
 </script>

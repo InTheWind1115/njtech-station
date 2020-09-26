@@ -12,14 +12,14 @@
         </div>
         <div class="home-body">
             <div class="home-body-usrphone">
-                <input type="text" class="home-body-usrphone-input">
+                <input disabled type="text" class="home-body-usrphone-input">
                 <span class="home-body-usrphone-info">用户手机</span>
             </div>
 
             <div class="home-body-email">
-                <input type="text" class="home-body-email-input">
+                <input disabled type="text" class="home-body-email-input">
                 <span class="home-body-email-info">学校邮箱</span>
-                <div class="info2 code-btn" @click="getEmailCode">去绑定</div>
+                <div class="info2 code-btn" @click="pushEmail">去绑定</div>
                 <!--                <div class="back-info" v-show="backInfo">-->
                 <!--                    <div class="email-code">-->
                 <!--                        <input type="text" class="email-code-input" placeholder="请输入验证码">-->
@@ -134,6 +134,9 @@
             // closeModal() {
             //     this.modalFlag = false;
             // }
+            pushEmail() {
+                this.$router.push('/email');
+            }
         }
     }
 </script>

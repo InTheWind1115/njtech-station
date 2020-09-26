@@ -2,7 +2,7 @@
     <div>
         广场
         <button type="button" @click="showModal">打开Modal</button>
-        <modal :show="isModalVisble" @close="closeModal"></modal>
+        <modal></modal>
     </div>
 
 </template>
