@@ -13,17 +13,14 @@
                 <div v-if="flag[index]">
                     <div class="info-left">
                         <img src="@/assets/images/zhuyin.png" alt="">
-                        <span class="messageSended">{{mess[index]}}</span>
+
+                        <span class="messageSended">
+                          <span class="tra-border"></span>
+                          {{mess[index]}}
+                        </span>
                     </div>
                 </div>
                 <div v-else>
-<!--                    <div class="info-right">-->
-<!--                        <img src="@/assets/images/zxc.png" alt="">-->
-<!--                        <div class="reletive-info clearfix">-->
-<!--                            <span class="messageSended">{{mess[index]}}</span>-->
-<!--                        </div>-->
-<!--                    </div>-->
-
                     <div class="info-right">
                         <span class="messageSended">{{mess[index]}}</span>
                         <img src="@/assets/images/zxc.png" alt="">
@@ -53,8 +50,10 @@
         return {
           modalFlag: false,
           information: '',
-          mess: ["我的意中人在附近", "啊，你看到他了？", "没有，因为我的紫青宝剑发出嘟嘟的声音", "哪儿来的嘟嘟声", "哎呀，我知道你听不见我才嘟给你听的嘛", "完了，我好害怕，我不骗你，我真的好害怕", "你怕什么？", "这段姻缘是上天安排的，你说我怕不怕？", "又来了......", "是啊！我的心在跳，我的宝剑在嘟，怎么办？", "怎么跟他说？怎么跟他说？"],
-          flag: [true, false, true, false, true, true, false, true, false, true, true],
+          mess: ["神仙？", "(摇头)", "妖怪？", "(摇头)", "谢谢！(牵驴向门口走去)", "喂！盘丝洞不要乱闯！", "盘丝洞？你当我不识字，明明是水帘洞嘛！", "(至尊宝抬头看时，不禁大惊)", "盘丝洞....，这名字也蛮好听的，好，就叫盘丝洞！(手一挥，将水帘洞变为盘丝洞)", "以后我就住在这儿！", "等一等!", "(手一挥，将至尊宝打倒，又将月光宝盒抓在手中)", "我现在郑重宣布，这座山所有的东西都是属于我的！"],
+          flag: [true, false, true, false, true, false, true, false, true, true, false, true, true],
+          // mess: ["我的意中人在附近", "啊，你看到他了？", "没有，因为我的紫青宝剑发出嘟嘟的声音", "哪儿来的嘟嘟声", "哎呀，我知道你听不见我才嘟给你听的嘛", "完了，我好害怕，我不骗你，我真的好害怕", "你怕什么？", "这段姻缘是上天安排的，你说我怕不怕？", "又来了......", "是啊！我的心在跳，我的宝剑在嘟，怎么办？", "怎么跟他说？怎么跟他说？"],
+          // flag: [true, false, true, false, true, true, false, true, false, true, true],
           funcInfo: "匹配",
           websocket: null,
           modalInfo: ''
@@ -192,225 +191,255 @@
 </script>
 
 <style lang="less" scoped>
-    #chat-root {
-        width: 542px;
-        height: 592px;
-        margin: 0 auto;
-        box-sizing: border-box;
-        border: 1px solid #d9d9d9;
-        background-color: #ffffff;
+  #chat-root {
+    width: 542px;
+    height: 592px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    border: 1px solid #d9d9d9;
+    background-color: #ffffff;
 
-        .box-top {
-            width: 540px;
-            height: 60px;
-            background-color: #f5f5f5;
+    .box-top {
+      width: 540px;
+      height: 60px;
+      background-color: #f5f5f5;
 
-            span {
-                margin-left: 30px;
-                font-size: 16px;
-                line-height: 60px;
-                color: #000000;
-            }
-        }
-
-        .box-show {
-            width: 540px;
-            height: 390px;
-            background-color: #f1f3f4;
-            box-sizing: border-box;
-            border-top: 1px solid #e7e7e7;
-            border-bottom: 1px solid #e7e7e7;
-            padding-left: 30px;
-            padding-right: 30px;
-            overflow: auto;
-            overflow-x: hidden;
-
-            .info-left {
-                position: relative;
-                width: 480px;
-                margin-bottom: 15px;
-
-                img {
-                    position: absolute;
-                    width: 34px;
-                    height: 34px;
-                    left: 0;
-                    top: 0;
-                    border-radius: 2px;
-                }
-
-                .messageSended {
-                    position: relative;
-                    display: inline-block;
-                    box-sizing: border-box;
-                    background-color: #9eea6a;
-                    color: #232323;
-                    font-size: 14px;
-                    margin-left: 42px;
-                    border-radius: 4px;
-                    min-height: 34px;
-                    max-width: 287px;
-                    padding: 11px 10px 11px 10px;
-                }
-
-                .messageSended:before {
-                    position: absolute;
-                    left: -8px;
-                    top: 9px;
-                    content: "";
-                    width: 0;
-                    height: 0;
-                    border-width: 8px 8px 8px 0;
-                    border-style: solid;
-                    border-color: transparent #9eea6a transparent;
-                }
-
-                .messageSended:hover {
-                    background-color: #98e165;
-                }
-
-                .messageSended:hover:before {
-                    position: absolute;
-                    left: -8px;
-                    top: 9px;
-                    content: "";
-                    width: 0;
-                    height: 0;
-                    border-width: 8px 8px 8px 0;
-                    border-style: solid;
-                    border-color: transparent #98e165 transparent;
-                }
-            }
-
-            .info-right {
-                display: flex;
-                justify-content: flex-end;
-                width: 480px;
-                margin-bottom: 15px;
-
-                img {
-                    width: 34px;
-                    height: 34px;
-                    border-radius: 2px;
-                }
-
-                .messageSended {
-                    position: relative;
-                    margin-right: 8px;
-                    box-sizing: border-box;
-                    display: inline-block;
-                    background-color: #9eea6a;
-                    color: #232323;
-                    font-size: 14px;
-                    border-radius: 4px;
-                    min-height: 34px;
-                    max-width: 287px;
-                    padding: 11px 10px 11px 10px;
-                }
-
-                .messageSended:after {
-                    position: absolute;
-                    right: -7px;
-                    top: 9px;
-                    content: "";
-                    width: 0;
-                    height: 0;
-                    border-width: 8px 0px 8px 8px;
-                    border-style: solid;
-                    border-color: transparent #9eea6a transparent;
-                }
-
-                .messageSended:hover {
-                    background-color: #98e165;
-                }
-
-                .messageSended:hover:after {
-                    position: absolute;
-                    right: -8px;
-                    top: 9px;
-                    content: "";
-                    width: 0;
-                    height: 0;
-                    border-width: 8px 0px 8px 8px;
-                    border-style: solid;
-                    border-color: transparent #98e165 transparent;
-                }
-
-
-            }
-
-
-        }
-
-        .box-bottom {
-            width: 540px;
-            height: 140px;
-
-            textarea {
-                width: 100%;
-                height: 105px;
-                display: block;
-                background-color: #f5f5f5;
-                box-sizing: border-box;
-                border: none;
-                resize: none;
-                padding-top: 10px;
-                padding-left: 25px;
-                outline: none;
-                font-size: 14px;
-                color: #000000;
-            }
-
-            .btn-div {
-                position: relative;
-                width: 100%;
-                height: 35px;
-                background-color: #f5f5f5;
-
-                .send {
-                    position: absolute;
-                    top: 5px;
-                    height: 25px;
-                    width: 60px;
-                    box-sizing: border-box;
-                    border: 1px solid #e1e1e1;
-                    text-align: center;
-                    line-height: 23px;
-                    background-color: #f5f5f5;
-                    color: #606060;
-                    right: 30px;
-                    font-size: 14px;
-                    cursor: pointer;
-                }
-
-                .send:hover {
-                    border: 1px solid #33b4de;
-                    background-color: #33b4de;
-                    color: #ffffff;
-                }
-
-                .match-leave {
-                    position: absolute;
-                    top: 5px;
-                    height: 25px;
-                    width: 60px;
-                    box-sizing: border-box;
-                    border: 1px solid #e1e1e1;
-                    text-align: center;
-                    line-height: 23px;
-                    background-color: #f5f5f5;
-                    color: #606060;
-                    left: 30px;
-                    font-size: 14px;
-                    cursor: pointer;
-                }
-
-                .match-leave:hover {
-                    border: 1px solid #33b4de;
-                    background-color: #33b4de;
-                    color: #ffffff;
-                }
-            }
-        }
+      span {
+        margin-left: 30px;
+        font-size: 16px;
+        line-height: 60px;
+        color: #000000;
+      }
     }
+
+    .box-show {
+      width: 540px;
+      height: 390px;
+      background-color: #f1f3f4;
+      box-sizing: border-box;
+      border-top: 1px solid #e7e7e7;
+      border-bottom: 1px solid #e7e7e7;
+      padding-left: 30px;
+      padding-right: 30px;
+      overflow: auto;
+      overflow-x: hidden;
+
+      .info-left {
+        position: relative;
+        width: 480px;
+        margin-bottom: 15px;
+
+        img {
+          position: absolute;
+          width: 34px;
+          height: 34px;
+          left: 0;
+          top: 0;
+          border-radius: 2px;
+        }
+
+        .messageSended {
+          position: relative;
+          display: inline-block;
+          box-sizing: border-box;
+          border: 1px solid #ededed;
+          background-color: #ffffff;
+          color: #232323;
+          font-size: 14px;
+          margin-left: 42px;
+          border-radius: 4px;
+          min-height: 34px;
+          max-width: 287px;
+          padding: 11px 10px 11px 10px;
+
+          .tra-border {
+            position: absolute;
+            z-index: 99;
+            left: -8px;
+            top: 9px;
+            content: "";
+            width: 0;
+            height: 0;
+            border-width: 8px 8px 8px 0;
+            border-style: solid;
+            border-color: transparent #ededed transparent;
+          }
+        }
+
+        .messageSended:before {
+          position: absolute;
+          left: -8px;
+          top: 9px;
+          content: "";
+          z-index: 100;
+          width: 0;
+          height: 0;
+          border-width: 8px 8px 8px 0;
+          border-style: solid;
+          border-color: transparent #ffffff transparent;
+        }
+
+        .messageSended:hover {
+          background-color: #f6f6f6;
+
+          .tra-border {
+            position: absolute;
+            z-index: 99;
+            left: -8px;
+            top: 9px;
+            content: "";
+            width: 0;
+            height: 0;
+            border-width: 8px 8px 8px 0;
+            border-style: solid;
+            border-color: transparent #e7e7e7 transparent;
+          }
+        }
+
+        .messageSended:hover:before {
+          position: absolute;
+          left: -8px;
+          top: 9px;
+          content: "";
+          width: 0;
+          height: 0;
+          border-width: 8px 8px 8px 0;
+          border-style: solid;
+          border-color: transparent #f6f6f6 transparent;
+        }
+
+
+      }
+
+      .info-right {
+        display: flex;
+        justify-content: flex-end;
+        width: 480px;
+        margin-bottom: 15px;
+
+        img {
+          width: 34px;
+          height: 34px;
+          border-radius: 2px;
+        }
+
+        .messageSended {
+          position: relative;
+          margin-right: 8px;
+          box-sizing: border-box;
+          display: inline-block;
+          background-color: #9eea6a;
+          color: #232323;
+          font-size: 14px;
+          border-radius: 4px;
+          min-height: 34px;
+          max-width: 287px;
+          padding: 11px 10px 11px 10px;
+        }
+
+        .messageSended:after {
+          position: absolute;
+          right: -7px;
+          top: 9px;
+          content: "";
+          width: 0;
+          height: 0;
+          border-width: 8px 0px 8px 8px;
+          border-style: solid;
+          border-color: transparent #9eea6a transparent;
+        }
+
+        .messageSended:hover {
+          background-color: #98e165;
+        }
+
+        .messageSended:hover:after {
+          position: absolute;
+          right: -7px;
+          top: 9px;
+          content: "";
+          width: 0;
+          height: 0;
+          border-width: 8px 0px 8px 8px;
+          border-style: solid;
+          border-color: transparent #98e165 transparent;
+        }
+
+
+      }
+
+
+    }
+
+    .box-bottom {
+      width: 540px;
+      height: 140px;
+
+      textarea {
+        width: 100%;
+        height: 105px;
+        display: block;
+        background-color: #f5f5f5;
+        box-sizing: border-box;
+        border: none;
+        resize: none;
+        padding-top: 10px;
+        padding-left: 25px;
+        outline: none;
+        font-size: 14px;
+        color: #000000;
+      }
+
+      .btn-div {
+        position: relative;
+        width: 100%;
+        height: 35px;
+        background-color: #f5f5f5;
+
+        .send {
+          position: absolute;
+          top: 5px;
+          height: 25px;
+          width: 60px;
+          box-sizing: border-box;
+          border: 1px solid #e1e1e1;
+          text-align: center;
+          line-height: 23px;
+          background-color: #f5f5f5;
+          color: #606060;
+          right: 30px;
+          font-size: 14px;
+          cursor: pointer;
+        }
+
+        .send:hover {
+          border: 1px solid #33b4de;
+          background-color: #33b4de;
+          color: #ffffff;
+        }
+
+        .match-leave {
+          position: absolute;
+          top: 5px;
+          height: 25px;
+          width: 60px;
+          box-sizing: border-box;
+          border: 1px solid #e1e1e1;
+          text-align: center;
+          line-height: 23px;
+          background-color: #f5f5f5;
+          color: #606060;
+          left: 30px;
+          font-size: 14px;
+          cursor: pointer;
+        }
+
+        .match-leave:hover {
+          border: 1px solid #33b4de;
+          background-color: #33b4de;
+          color: #ffffff;
+        }
+      }
+    }
+  }
 </style>
