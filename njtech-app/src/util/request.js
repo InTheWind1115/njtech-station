@@ -38,7 +38,6 @@ export const myRequest = options => {
       for (let key in data) {
         str = str + '&' +  key + '=' + data[key]
       }
-      console.log("str:" + str)
       return str.substring(1, str.length);
     }],
   })
